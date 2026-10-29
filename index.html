@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Web Dev Hub - AI Caption Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 p-4 text-center">
+        <h1 class="text-2xl font-bold text-cyan-400">Modern Web Dev Hub</h1>
+        <p class="text-sm text-slate-400">ٹک ٹاک، انسٹاگرام اور فیس بک کے لیے AI کیپشنز بنائیں</p>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container mx-auto p-4 max-w-xl flex-grow">
+        
+        <!-- Input Form Box -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg mb-6">
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2 text-slate-300">اپنے ٹاپک یا ویڈیو کے بارے میں لکھیں:</label>
+                <input type="text" id="topicInput" placeholder="مثلاً: Gym workout motivation..." class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-cyan-400">
+            </div>
+
+            <div class="mb-4">
+                پلت فارم منتخب کریں:
+                <select id="platformSelect" class="w-full p-3 mt-1 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-cyan-400">
+                    <option value="TikTok">TikTok Caption & Hashtags</option>
+                    <option value="Instagram">Instagram Reels Caption</option>
+                    <option value="Facebook">Facebook Post</option>
+                </select>
+            </div>
+
+            <button onclick="generateCaption()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold p-3 rounded-lg transition duration-200">
+                AI کیپشن جنریٹ کریں 🚀
+            </button>
+        </div>
+
+        <!-- Result Box -->
+        <div id="resultBox" class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg hidden">
+            <h2 class="text-lg font-semibold text-cyan-400 mb-2">آپ کا کیپشن تیار ہے:</h2>
+            <div id="outputText" class="bg-slate-900 p-4 rounded-lg text-slate-200 whitespace-pre-wrap mb-4 border border-slate-700"></div>
+            <button onclick="copyCaption()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold p-2.5 rounded-lg">
+                کاپی کریں 📋
+            </button>
+        </div>
+
+        <!-- Payment Promotion Box -->
+        <div class="bg-gradient-to-r from-purple-900 to-indigo-900 border border-purple-700 rounded-xl p-5 mt-6 text-center shadow-xl">
+            <h3 class="text-lg font-bold text-yellow-300 mb-1">انلمیٹڈ (Unlimited) استعمال کے لیے!</h3>
+            <p class="text-sm text-slate-200 mb-3">صرف 499 روپے میں لائف ٹائم پاس حاصل کریں۔ ایزی پیسہ کے ذریعے پیمنٹ کریں اور واٹس ایپ پر رابطہ کریں۔</p>
+            <a href="https://wa.me/923350473732?text=Mainay%20Rs.%20499%20pay%20kar%20diye%20hain,%20mujhe%20Unlimited%20Access%20chahiye." target="_blank" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-2.5 rounded-lg transition">
+                WhatsApp پر رابطہ کریں 📲 (03350473732)
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 p-4 text-center text-xs text-slate-500">
+        &copy; 2026 Modern Web Dev Hub. All rights reserved.
+    </footer>
+
+    <!-- JavaScript Logic with Gemini API -->
+    <script>
+        // یہاں اپنی گوگل جیمنی API کی (API Key) درج کریں
+        const GEMINI_API_KEY = "YAHAN_APNI_GOOGLE_API_KEY_LAGAYEIN"; 
+
+        async function generateCaption() {
+            const topic = document.getElementById('topicInput').value.trim();
+            const platform = document.getElementById('platformSelect').value;
+            const outputDiv = document.getElementById('outputText');
+            const resultBox = document.getElementById('resultBox');
+
+            if (!topic) {
+                alert("براہ کرم کچھ ٹاپک یا نام لکھیں!");
+                return;
+            }
+
+            if (GEMINI_API_KEY === "YAHAN_APNI_GOOGLE_API_KEY_LAGAYEIN") {
+                alert("براہ کرم کوڈ میں اپنی گوگل جیمنی API کی (API Key) درج کریں!");
+                return;
+            }
+
+            outputDiv.innerText = "جنریٹ ہو رہا ہے، براہ کرم انتظار کریں...";
+            resultBox.classList.remove('hidden');
+
+            const promptText = `Create a viral social media caption with hashtags for ${platform} about this topic: "${topic}". Make it engaging in Urdu/Roman Urdu and English mix format.`;
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: promptText }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    outputDiv.innerText = data.candidates[0].content.parts[0].text;
+                } else {
+                    outputDiv.innerText = "معذرت، اے آئی سے جواب حاصل کرنے میں مسئلہ ہوا۔ دوبارہ کوشش کریں۔";
+                }
+
+            } catch (error) {
+                console.error(error);
+                outputDiv.innerText = "انٹرنیٹ یا اے آئی کی کنکشن میں خرابی ہو گئی ہے۔";
+            }
+        }
+
+        function copyCaption() {
+            const text = document.getElementById('outputText').innerText;
+            navigator.clipboard.writeText(text);
+            alert("کیپشن کامیابی سے کاپی ہو گیا ہے!");
+        }
+    </script>
+</body>
+</html>
